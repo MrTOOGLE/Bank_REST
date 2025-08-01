@@ -22,6 +22,7 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("user_id", user.getId());
         claims.put("role", user.getRole());
+        claims.put("name", user.getName());
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -45,6 +46,11 @@ public class JwtUtil {
     public Long extractUserId(String token) {
         Claims claims = extractClaims(token);
         return claims.get("user_id", Long.class);
+    }
+
+    public Long extractName(String token) {
+        Claims claims = extractClaims(token);
+        return claims.get("name", Long.class);
     }
 
     public boolean isTokenValid(String token) {

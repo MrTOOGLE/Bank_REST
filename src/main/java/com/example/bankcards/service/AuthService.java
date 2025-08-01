@@ -22,10 +22,11 @@ public class AuthService {
         return jwtUtil.generateToken(user);
     }
 
-    public User register(String email, String password) {
+    public User register(String email, String password, String name) {
         User user = new User();
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
+        user.setName(name);
         return userService.createUser(user);
     }
 
