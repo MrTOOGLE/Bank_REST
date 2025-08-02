@@ -14,7 +14,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final PasswordEncoder encoder;
+    private final PasswordEncoder passwordEncoder;
 
     public User createUser(User user) {
         if (userRepository.findByEmail(user.getEmail()).isEmpty()) {
@@ -38,7 +38,7 @@ public class UserService {
     public User updateUserPassword(String email, String password) {
         if (userRepository.findByEmail(email).isPresent()) {
             User user = userRepository.findByEmail(email).get();
-            user.setPassword(encoder.encode(password));
+            user.setPassword(passwordEncoder.encode(password));
             return userRepository.save(user);
         }
         throw new ServiceException("USER_NOT_EXISTS", "Такого пользователя не существует");
@@ -53,6 +53,6 @@ public class UserService {
     }
 
     private String encryptPassword(String password) {
-        return encoder.encode(password);
+        return passwordEncoder.encode(password);
     }
 }

@@ -48,9 +48,9 @@ public class JwtUtil {
         return claims.get("user_id", Long.class);
     }
 
-    public Long extractName(String token) {
+    public String extractName(String token) {
         Claims claims = extractClaims(token);
-        return claims.get("name", Long.class);
+        return claims.get("name", String.class);
     }
 
     public boolean isTokenValid(String token) {

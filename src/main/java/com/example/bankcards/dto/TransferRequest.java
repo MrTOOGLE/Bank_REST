@@ -17,7 +17,7 @@ public class TransferRequest {
     @NotBlank(message = "Номер карты отправителя обязателен")
     private String fromCardNumber;
 
-    @NotBlank(message = "Номер карты отправителя обязателен")
+    @NotBlank(message = "Номер карты получателя обязателен")
     private String toCardNumber;
 
     @DecimalMin(value = "0.01", message = "Сумма должна быть больше 0")
