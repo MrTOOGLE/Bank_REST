@@ -13,14 +13,15 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
   liquibase:
-    enabled: false
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
 
 jwt:
   secret: 32ea1db3931667574e303d2d1d201a4b0d4668bb28576e3de96e331205d505e55c50d2a2cabf8286875be49ded8529b7ea5ebbcb047686e211a71b38217e755e

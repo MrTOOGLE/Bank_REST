@@ -29,7 +29,7 @@ public class CardController {
     private final CardMapper cardMapper;
 
     @PostMapping
-    public ResponseEntity<String> createCard(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody CreateCardRequest createCardRequest) {
+    public ResponseEntity<String> createCard(@Valid @RequestBody CreateCardRequest createCardRequest) {
         User user = userService.findUserById(createCardRequest.getUserId());
         cardService.createCard(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();

@@ -5,12 +5,11 @@ import com.example.bankcards.dto.Request.UpdateUserRoleRequest;
 import com.example.bankcards.dto.UserDto;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.mapper.UserMapper;
-import com.example.bankcards.security.CustomUserDetails;
 import com.example.bankcards.service.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class UserController {
     private UserMapper userMapper;
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getUsers(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ResponseEntity<List<UserDto>> getUsers() {
         List<User> users = userService.findAll();
         List<UserDto> userDtos = users.stream().map(user -> userMapper.toUserDto(user)).toList();
         return ResponseEntity.ok(userDtos);
@@ -31,18 +30,19 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createUser(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody CreateUserRequest createUserRequest) {
-        User user = userService.updateUserPassword(createUserRequest.getEmail(), createUserRequest.getPassword());
-
-        user.setEmail(createUserRequest.getEmail());
+    public void createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
+        User user = new User();
         user.setName(createUserRequest.getName());
+        user.setEmail(createUserRequest.getEmail());
+        user.setPassword(createUserRequest.getPassword());
         user.setRole(createUserRequest.getRole());
-        userService.updateUserProfile(user);
+
+        userService.createUser(user);
     }
 
     @PutMapping("/{id}/role")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateUserRole(@PathVariable("id") Long id, @RequestBody UpdateUserRoleRequest updateUserRoleRequest) {
+    public void updateUserRole(@PathVariable("id") Long id,@Valid @RequestBody UpdateUserRoleRequest updateUserRoleRequest) {
         User user = userService.findUserById(id);
         user.setRole(updateUserRoleRequest.getRole());
         userService.updateUserProfile(user);
@@ -50,7 +50,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam("id") Long id) {
+    public void deleteUser(@PathVariable("id") Long id) {
         User user = userService.findUserById(id);
         userService.deleteUser(user);
     }

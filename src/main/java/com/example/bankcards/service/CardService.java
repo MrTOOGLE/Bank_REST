@@ -4,6 +4,7 @@ import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.Status;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.ErrorCode;
 import com.example.bankcards.exception.ServiceException;
 import com.example.bankcards.repository.CardRepository;
 import lombok.AllArgsConstructor;
@@ -36,7 +37,7 @@ public class CardService {
             cardRepository.delete(card);
         }
         else {
-            throw new ServiceException("ACCESS_DENIED", "У вас нет прав на изменение удаление карты");
+            throw new ServiceException(ErrorCode.ACCESS_DENIED, "У вас нет прав на изменение удаление карты");
         }
     }
 
@@ -48,7 +49,7 @@ public class CardService {
             card.setBalance(balance);
             cardRepository.save(card);
         } else {
-            throw new ServiceException("NOT_OWNER", "Вы не являетесь собственником этой карты");
+            throw new ServiceException(ErrorCode.NOT_OWNER, "Вы не являетесь собственником этой карты");
         }
     }
 
@@ -61,7 +62,7 @@ public class CardService {
             cardRepository.save(card);
         }
         else {
-            throw new ServiceException("ACCESS_DENIED", "У вас нет прав на изменение статуса карты");
+            throw new ServiceException(ErrorCode.ACCESS_DENIED, "У вас нет прав на изменение статуса карты");
         }
     }
 
@@ -89,15 +90,15 @@ public class CardService {
         if (checkOwner(user, card) || user.getRole().equals(Role.ADMIN)) {
             return card.getBalance();
         }
-        throw new ServiceException("NOT_OWNER", "Вы не являетесь собственником этой карты");
+        throw new ServiceException(ErrorCode.NOT_OWNER, "Вы не являетесь собственником этой карты");
     }
 
     public Card findCardByNumber(String number) {
-        return cardRepository.findByNumber(number).orElseThrow(() -> new ServiceException("CARD_NOT_FOUND", "Карта не найдена"));
+        return cardRepository.findByNumber(number).orElseThrow(() -> new ServiceException(ErrorCode.CARD_NOT_FOUND, "Карта не найдена"));
     }
 
     public Card findCardById(Long id) {
-        return cardRepository.findById(id).orElseThrow(() -> new ServiceException("CARD_NOT_FOUND", "Карта не найдена"));
+        return cardRepository.findById(id).orElseThrow(() -> new ServiceException(ErrorCode.CARD_NOT_FOUND, "Карта не найдена"));
     }
 
     @Transactional
@@ -105,14 +106,14 @@ public class CardService {
         checkValidityPeriod(card);
 
         if (card.getStatus() == Status.EXPIRED) {
-            throw new ServiceException("CARD_EXPIRED", "Нельзя заблокировать просроченную карту");
+            throw new ServiceException(ErrorCode.CARD_EXPIRED, "Нельзя заблокировать просроченную карту");
         }
 
         if (checkOwner(user, card)) {
             card.setStatus(Status.BLOCKED);
             cardRepository.save(card);
         } else {
-            throw new ServiceException("NOT_OWNER", "Вы не являетесь собственником этой карты");
+            throw new ServiceException(ErrorCode.NOT_OWNER, "Вы не являетесь собственником этой карты");
         }
     }
 

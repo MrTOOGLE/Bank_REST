@@ -1,0 +1,3 @@
+databaseChangeLog:
+  - include:
+      file: db/migrations/changesets/V001__initial_schema.yaml

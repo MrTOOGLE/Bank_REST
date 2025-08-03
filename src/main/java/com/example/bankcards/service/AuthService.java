@@ -1,6 +1,7 @@
 package com.example.bankcards.service;
 
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.ErrorCode;
 import com.example.bankcards.exception.ServiceException;
 import com.example.bankcards.util.JwtUtil;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,7 @@ public class AuthService {
     public String login(String email, String password) {
         User user = userService.findUserByEmail(email);
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new ServiceException("WRONG_PASSWORD", "Неверный пароль");
+            throw new ServiceException(ErrorCode.WRONG_PASSWORD, "Неверный пароль");
         }
         return jwtUtil.generateToken(user);
     }

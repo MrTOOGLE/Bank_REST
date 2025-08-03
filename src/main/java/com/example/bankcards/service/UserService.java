@@ -1,6 +1,7 @@
 package com.example.bankcards.service;
 
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.ErrorCode;
 import com.example.bankcards.exception.ServiceException;
 import com.example.bankcards.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -15,12 +16,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public User createUser(User user) {
+    public void createUser(User user) {
         if (userRepository.findByEmail(user.getEmail()).isEmpty()) {
             user.setPassword(encryptPassword(user.getPassword()));
-            return userRepository.save(user);
+            userRepository.save(user);
+        } else {
+            throw new ServiceException(ErrorCode.USER_EXISTS, "Пользователь с почтой " + user.getEmail() + " уже существует");
         }
-        throw new ServiceException("USER_EXISTS", "Пользователь с почтой " + user.getEmail() + " уже существует");
     }
 
     public void deleteUser(User user) {
@@ -29,26 +31,17 @@ public class UserService {
 
     public void updateUserProfile(User user) {
         if (userRepository.findByEmail(user.getEmail()).isEmpty()) {
-            throw new ServiceException("USER_NOT_EXISTS", "Такого пользователя не существует");
+            throw new ServiceException(ErrorCode.USER_NOT_EXISTS, "Такого пользователя не существует");
         }
         userRepository.save(user);
     }
 
-    public User updateUserPassword(String email, String password) {
-        if (userRepository.findByEmail(email).isPresent()) {
-            User user = userRepository.findByEmail(email).get();
-            user.setPassword(passwordEncoder.encode(password));
-            return userRepository.save(user);
-        }
-        throw new ServiceException("USER_NOT_EXISTS", "Такого пользователя не существует");
-    }
-
     public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new ServiceException("USER_NOT_FOUND", "Пользователь не найден"));
+        return userRepository.findByEmail(email).orElseThrow(() -> new ServiceException(ErrorCode.USER_NOT_FOUND, "Пользователь не найден"));
     }
 
     public User findUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new ServiceException("USER_NOT_FOUND", "Пользователь не найден"));
+        return userRepository.findById(id).orElseThrow(() -> new ServiceException(ErrorCode.USER_NOT_FOUND, "Пользователь не найден"));
     }
 
     public List<User> findAll() {

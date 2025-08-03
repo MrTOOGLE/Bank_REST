@@ -3,6 +3,7 @@ package com.example.bankcards.service;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.Status;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.ErrorCode;
 import com.example.bankcards.exception.ServiceException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,19 +22,19 @@ public class TransferService {
         Card toCard = cardService.findCardByNumber(toCardNumber);
 
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new ServiceException("INVALID_AMOUNT", "Перевод должен быть больше нуля");
+            throw new ServiceException(ErrorCode.INVALID_AMOUNT, "Перевод должен быть больше нуля");
         }
 
         if (fromCardNumber.equals(toCardNumber)) {
-            throw new ServiceException("SAME_CARD", "Нельзя переводить на ту же карту");
+            throw new ServiceException(ErrorCode.SAME_CARD, "Нельзя переводить на ту же карту");
         }
 
         if (!fromCard.getOwner().getId().equals(owner.getId()) || !toCard.getOwner().getId().equals(owner.getId())) {
-            throw new ServiceException("WRONG_CARD_OWNER", "Одна из ващих карт не принадлежит вам");
+            throw new ServiceException(ErrorCode.WRONG_CARD_OWNER, "Одна из ващих карт не принадлежит вам");
         }
 
         if (!fromCard.getStatus().equals(Status.ACTIVE) || !toCard.getStatus().equals(Status.ACTIVE)) {
-            throw new ServiceException("WRONG_CARD_STATUS", "Одна из ваших карт не активна");
+            throw new ServiceException(ErrorCode.WRONG_CARD_STATUS, "Одна из ваших карт не активна");
         }
 
         if (fromCard.getBalance().compareTo(amount) >= 0) {
@@ -42,7 +43,7 @@ public class TransferService {
             cardService.updateCardBalance(owner, fromCard, fromCard.getBalance());
             cardService.updateCardBalance(owner, toCard, toCard.getBalance());
         } else {
-            throw new ServiceException("LOW_BALANCE", "На вашей карте не хватает денег");
+            throw new ServiceException(ErrorCode.LOW_BALANCE, "На вашей карте не хватает денег");
         }
     }
 }
