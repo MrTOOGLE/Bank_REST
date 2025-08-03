@@ -1,5 +1,7 @@
 package com.example.bankcards.controller;
 
+import com.example.bankcards.dto.Request.CreateUserRequest;
+import com.example.bankcards.dto.Request.UpdateUserRoleRequest;
 import com.example.bankcards.dto.UserDto;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.mapper.UserMapper;
@@ -27,7 +29,26 @@ public class UserController {
         return ResponseEntity.ok(userDtos);
     }
 
-    @DeleteMapping("/id")
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createUser(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody CreateUserRequest createUserRequest) {
+        User user = userService.updateUserPassword(createUserRequest.getEmail(), createUserRequest.getPassword());
+
+        user.setEmail(createUserRequest.getEmail());
+        user.setName(createUserRequest.getName());
+        user.setRole(createUserRequest.getRole());
+        userService.updateUserProfile(user);
+    }
+
+    @PutMapping("/{id}/role")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateUserRole(@PathVariable("id") Long id, @RequestBody UpdateUserRoleRequest updateUserRoleRequest) {
+        User user = userService.findUserById(id);
+        user.setRole(updateUserRoleRequest.getRole());
+        userService.updateUserProfile(user);
+    }
+
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam("id") Long id) {
         User user = userService.findUserById(id);

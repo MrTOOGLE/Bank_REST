@@ -1,6 +1,6 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.TransferRequest;
+import com.example.bankcards.dto.Request.TransferRequest;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.security.CustomUserDetails;
 import com.example.bankcards.service.TransferService;

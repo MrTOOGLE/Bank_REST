@@ -1,6 +1,7 @@
 package com.example.bankcards.security;
 
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.ServiceException;
 import com.example.bankcards.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +16,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findUserByEmail(username);
+        User user;
+        try {
+            user = userService.findUserByEmail(username);
+        } catch (ServiceException e) {
+            throw new UsernameNotFoundException(e.getMessage());
+        }
         return new CustomUserDetails(user);
     }
 }

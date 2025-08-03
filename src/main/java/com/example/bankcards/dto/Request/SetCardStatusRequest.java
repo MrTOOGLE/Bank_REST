@@ -1,4 +1,4 @@
-package com.example.bankcards.dto;
+package com.example.bankcards.dto.Request;
 
 import com.example.bankcards.entity.Status;
 import jakarta.validation.constraints.NotNull;

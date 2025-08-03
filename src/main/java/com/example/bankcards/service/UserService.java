@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -28,11 +27,11 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public User updateUserProfile(User user) {
+    public void updateUserProfile(User user) {
         if (userRepository.findByEmail(user.getEmail()).isEmpty()) {
             throw new ServiceException("USER_NOT_EXISTS", "Такого пользователя не существует");
         }
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     public User updateUserPassword(String email, String password) {

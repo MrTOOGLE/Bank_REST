@@ -1,4 +1,4 @@
-package com.example.bankcards.dto;
+package com.example.bankcards.dto.Request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -12,10 +12,13 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequest {
+public class RegisterRequest {
     @NotBlank(message = "Email обязателен")
     @Email(message = "Неверный формат email")
     private String email;
+
+    @NotBlank(message = "Имя обязательно")
+    private String name;
 
     @NotBlank(message = "Пароль обязателен")
     @Size(min = 6, message = "Пароль минимум 6 символов")

@@ -1,9 +1,9 @@
 package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.CardDto;
-import com.example.bankcards.dto.CreateCardRequest;
+import com.example.bankcards.dto.Request.CreateCardRequest;
+import com.example.bankcards.dto.Request.SetCardStatusRequest;
 import com.example.bankcards.entity.Card;
-import com.example.bankcards.entity.Status;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.mapper.CardMapper;
 import com.example.bankcards.security.CustomUserDetails;
@@ -19,7 +19,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 
 @RestController
 @AllArgsConstructor
@@ -54,10 +53,10 @@ public class CardController {
     @PutMapping("/{id}/status")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void setStatus(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                            @PathVariable Long id, @Valid @RequestBody Status status) {
+                          @PathVariable Long id, @Valid @RequestBody SetCardStatusRequest setCardStatusRequest) {
         User user = customUserDetails.getUser();
         Card card = cardService.findCardById(id);
-        cardService.updateCardStatus(user, card, status);
+        cardService.updateCardStatus(user, card, setCardStatusRequest.getStatus());
     }
 
     @PutMapping("/{id}/block")

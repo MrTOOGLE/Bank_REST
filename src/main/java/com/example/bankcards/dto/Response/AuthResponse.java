@@ -1,4 +1,4 @@
-package com.example.bankcards.dto;
+package com.example.bankcards.dto.Response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

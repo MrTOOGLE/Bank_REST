@@ -1,8 +1,8 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.LoginRequest;
-import com.example.bankcards.dto.AuthResponse;
-import com.example.bankcards.dto.RegisterRequest;
+import com.example.bankcards.dto.Request.LoginRequest;
+import com.example.bankcards.dto.Response.AuthResponse;
+import com.example.bankcards.dto.Request.RegisterRequest;
 import com.example.bankcards.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

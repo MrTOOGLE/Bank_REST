@@ -60,7 +60,9 @@ public class CardService {
             card.setStatus(status);
             cardRepository.save(card);
         }
-        throw new ServiceException("ACCESS_DENIED", "У вас нет прав на изменение статуса карты");
+        else {
+            throw new ServiceException("ACCESS_DENIED", "У вас нет прав на изменение статуса карты");
+        }
     }
 
     public Page<Card> getAllCards(User user, Pageable pageable) {

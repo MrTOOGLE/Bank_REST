@@ -40,6 +40,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/cards").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/cards/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/cards/*/status").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/**").hasRole("ADMIN")
 
                         // Для всего остального - нужна авторизация
                         .anyRequest().authenticated()
