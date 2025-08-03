@@ -15,19 +15,19 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     public String login(String email, String password) {
-        User user = userService.getUserByEmail(email).orElseThrow(() -> new ServiceException("USER_NOT_EXISTS", "Такого пользователя не существует"));
+        User user = userService.findUserByEmail(email).orElseThrow(() -> new ServiceException("USER_NOT_EXISTS", "Такого пользователя не существует"));
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new ServiceException("WRONG_PASSWORD", "Неверный пароль");
         }
         return jwtUtil.generateToken(user);
     }
 
-    public User register(String email, String password, String name) {
+    public void register(String email, String password, String name) {
         User user = new User();
         user.setEmail(email);
         user.setPassword(password);
         user.setName(name);
-        return userService.createUser(user);
+        userService.createUser(user);
     }
 
     public User getCurrentUser(String token) {
@@ -36,7 +36,7 @@ public class AuthService {
         }
 
         String email = jwtUtil.extractEmail(token);
-        return userService.getUserByEmail(email)
+        return userService.findUserByEmail(email)
                 .orElseThrow(() -> new ServiceException("USER_NOT_FOUND", "Пользователь не найден"));
     }
 }

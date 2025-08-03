@@ -44,7 +44,7 @@ public class UserService {
         throw new ServiceException("USER_NOT_EXISTS", "Такого пользователя не существует");
     }
 
-    public Optional<User> getUserByEmail(String email) {
+    public Optional<User> findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 

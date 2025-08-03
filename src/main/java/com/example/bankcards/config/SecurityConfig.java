@@ -1,7 +1,6 @@
 package com.example.bankcards.config;
 
 import com.example.bankcards.security.JwtAuthenticationFilter;
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,6 +40,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/cards").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/cards/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/cards/*/status").hasRole("ADMIN")
+                        // TODO - удалить потом
+                        .requestMatchers(HttpMethod.POST, "/api/cards/admin-test").hasRole("ADMIN")
 
                         // Для всего остального - нужна авторизация
                         .anyRequest().authenticated()

@@ -23,7 +23,7 @@ spring:
     enabled: false
 
 jwt:
-  secret: myVeryVeryLongSecretKeyForJWT123:)
+  secret: 32ea1db3931667574e303d2d1d201a4b0d4668bb28576e3de96e331205d505e55c50d2a2cabf8286875be49ded8529b7ea5ebbcb047686e211a71b38217e755e
   expiration: 86400000 # 24 часа
 
 springdoc:

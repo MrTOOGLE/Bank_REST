@@ -15,42 +15,46 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class CardService {
     CardRepository cardRepository;
 
-    public Card createCard(User owner) {
+    public void createCard(User owner) {
         Card card = new Card();
         card.setNumber(generateCardNumber());
         card.setOwner(owner);
         card.setValidityPeriod(LocalDate.now().plusYears(3));
 
-        return cardRepository.save(card);
+        cardRepository.save(card);
     }
 
-    public void deleteCard(Card card) {
-        cardRepository.delete(card);
+    public void deleteCard(User user, Card card) {
+        if (user.getRole().equals(Role.ADMIN)) {
+            cardRepository.delete(card);
+        }
+        else {
+            throw new ServiceException("ACCESS_DENIED", "У вас нет прав на изменение удаление карты");
+        }
     }
 
-    public Card updateCardBalance(User user, Card card, BigDecimal balance) {
+    public void updateCardBalance(User user, Card card, BigDecimal balance) {
         checkValidityPeriod(card);
 
         if (checkOwner(user, card) || user.getRole().equals(Role.ADMIN)) {
             card.setBalance(balance);
-            return cardRepository.save(card);
+            cardRepository.save(card);
         }
         throw new ServiceException("NOT_OWNER", "Вы не являетесь собственником этой карты");
     }
 
-    public Card updateCardStatus(User user, Card card, Status status) {
+    public void updateCardStatus(User user, Card card, Status status) {
         checkValidityPeriod(card);
 
         if (user.getRole().equals(Role.ADMIN)) {
             card.setStatus(status);
-            return cardRepository.save(card);
+            cardRepository.save(card);
         }
         throw new ServiceException("ACCESS_DENIED", "У вас нет прав на изменение статуса карты");
     }
@@ -76,7 +80,7 @@ public class CardService {
     public BigDecimal getBalance(User user, Card card) {
         checkValidityPeriod(card);
 
-        if (checkOwner(user, card)) {
+        if (checkOwner(user, card) || user.getRole().equals(Role.ADMIN)) {
             return card.getBalance();
         }
         throw new ServiceException("NOT_OWNER", "Вы не являетесь собственником этой карты");
@@ -86,7 +90,11 @@ public class CardService {
         return cardRepository.findByNumber(number).orElseThrow(() -> new ServiceException("CARD_NOT_FOUND", "Карта не найдена"));
     }
 
-    public Card blockCard(User user, Card card) {
+    public Card findCardById(Long id) {
+        return cardRepository.findById(id).orElseThrow(() -> new ServiceException("CARD_NOT_FOUND", "Карта не найдена"));
+    }
+
+    public void blockCard(User user, Card card) {
         checkValidityPeriod(card);
 
         if (card.getStatus() == Status.EXPIRED) {
@@ -95,7 +103,7 @@ public class CardService {
 
         if (checkOwner(user, card)) {
             card.setStatus(Status.BLOCKED);
-            return cardRepository.save(card);
+            cardRepository.save(card);
         }
         throw new ServiceException("NOT_OWNER", "Вы не являетесь собственником этой карты");
     }
