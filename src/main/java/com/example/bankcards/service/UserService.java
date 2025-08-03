@@ -44,8 +44,12 @@ public class UserService {
         throw new ServiceException("USER_NOT_EXISTS", "Такого пользователя не существует");
     }
 
-    public Optional<User> findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new ServiceException("USER_NOT_FOUND", "Пользователь не найден"));
+    }
+
+    public User findUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new ServiceException("USER_NOT_FOUND", "Пользователь не найден"));
     }
 
     public List<User> findAll() {

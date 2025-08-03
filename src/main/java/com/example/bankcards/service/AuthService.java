@@ -15,7 +15,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     public String login(String email, String password) {
-        User user = userService.findUserByEmail(email).orElseThrow(() -> new ServiceException("USER_NOT_EXISTS", "Такого пользователя не существует"));
+        User user = userService.findUserByEmail(email);
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new ServiceException("WRONG_PASSWORD", "Неверный пароль");
         }
@@ -28,15 +28,5 @@ public class AuthService {
         user.setPassword(password);
         user.setName(name);
         userService.createUser(user);
-    }
-
-    public User getCurrentUser(String token) {
-        if (!jwtUtil.isTokenValid(token)) {
-            throw new ServiceException("INVALID_TOKEN", "Токен недействителен");
-        }
-
-        String email = jwtUtil.extractEmail(token);
-        return userService.findUserByEmail(email)
-                .orElseThrow(() -> new ServiceException("USER_NOT_FOUND", "Пользователь не найден"));
     }
 }

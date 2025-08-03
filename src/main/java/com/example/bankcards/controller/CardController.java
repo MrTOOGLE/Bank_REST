@@ -1,11 +1,14 @@
 package com.example.bankcards.controller;
 
+import com.example.bankcards.dto.CardDto;
 import com.example.bankcards.dto.CreateCardRequest;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.Status;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.mapper.CardMapper;
 import com.example.bankcards.security.CustomUserDetails;
 import com.example.bankcards.service.CardService;
+import com.example.bankcards.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,24 +19,29 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/cards")
+@RequestMapping("/api/v1/cards")
 public class CardController {
+    private final UserService userService;
     private CardService cardService;
+    private final CardMapper cardMapper;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createCard(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody CreateCardRequest createCardRequest) {
-        cardService.createCard(customUserDetails.getUser());
+    public ResponseEntity<String> createCard(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody CreateCardRequest createCardRequest) {
+        User user = userService.findUserById(createCardRequest.getUserId());
+        cardService.createCard(user);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping
-    public ResponseEntity<Page<Card>> getCards(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable) {
+    public ResponseEntity<Page<CardDto>> getCards(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable) {
         User user = customUserDetails.getUser();
         Page<Card> cards = cardService.getAllCards(user, pageable);
-        return ResponseEntity.ok(cards);
+        Page<CardDto> cardDtos = cards.map(cardMapper::toCardDto);
+        return ResponseEntity.ok(cardDtos);
     }
 
     @GetMapping("/{id}/balance")
@@ -44,7 +52,7 @@ public class CardController {
     }
 
     @PutMapping("/{id}/status")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void setStatus(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                             @PathVariable Long id, @Valid @RequestBody Status status) {
         User user = customUserDetails.getUser();
@@ -53,7 +61,7 @@ public class CardController {
     }
 
     @PutMapping("/{id}/block")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void setBlock(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long id) {
         User user = customUserDetails.getUser();
         Card card = cardService.findCardById(id);
@@ -61,7 +69,7 @@ public class CardController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCard(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long id) {
         User user = customUserDetails.getUser();
         Card card = cardService.findCardById(id);

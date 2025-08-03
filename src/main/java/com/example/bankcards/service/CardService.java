@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -39,16 +40,19 @@ public class CardService {
         }
     }
 
+    @Transactional
     public void updateCardBalance(User user, Card card, BigDecimal balance) {
         checkValidityPeriod(card);
 
         if (checkOwner(user, card) || user.getRole().equals(Role.ADMIN)) {
             card.setBalance(balance);
             cardRepository.save(card);
+        } else {
+            throw new ServiceException("NOT_OWNER", "Вы не являетесь собственником этой карты");
         }
-        throw new ServiceException("NOT_OWNER", "Вы не являетесь собственником этой карты");
     }
 
+    @Transactional
     public void updateCardStatus(User user, Card card, Status status) {
         checkValidityPeriod(card);
 
@@ -94,6 +98,7 @@ public class CardService {
         return cardRepository.findById(id).orElseThrow(() -> new ServiceException("CARD_NOT_FOUND", "Карта не найдена"));
     }
 
+    @Transactional
     public void blockCard(User user, Card card) {
         checkValidityPeriod(card);
 
@@ -104,8 +109,9 @@ public class CardService {
         if (checkOwner(user, card)) {
             card.setStatus(Status.BLOCKED);
             cardRepository.save(card);
+        } else {
+            throw new ServiceException("NOT_OWNER", "Вы не являетесь собственником этой карты");
         }
-        throw new ServiceException("NOT_OWNER", "Вы не являетесь собственником этой карты");
     }
 
     private boolean checkOwner(User user, Card card) {

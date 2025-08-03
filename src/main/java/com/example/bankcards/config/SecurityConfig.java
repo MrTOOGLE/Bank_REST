@@ -33,15 +33,13 @@ public class SecurityConfig {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
                         // Для всех
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                         // Для админа
-                        .requestMatchers(HttpMethod.POST, "/api/cards").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/cards/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/cards/*/status").hasRole("ADMIN")
-                        // TODO - удалить потом
-                        .requestMatchers(HttpMethod.POST, "/api/cards/admin-test").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/cards").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/cards/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/cards/*/status").hasRole("ADMIN")
 
                         // Для всего остального - нужна авторизация
                         .anyRequest().authenticated()
