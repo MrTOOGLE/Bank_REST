@@ -1,9 +1,43 @@
-# 
-# docker-compose.yml — определяет сервисы для разработки и тестирования.
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: bankcards_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: bankcards_db
+      MYSQL_USER: bankuser
+      MYSQL_PASSWORD: bankpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - banknet
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
-Что нужно сделать:
-  - Настроить сервисы для:
-      - PostgreSQL (или MySQL) с начальной базой.
-      - Приложения Spring Boot (если нужно).
-  - Открыть нужные порты (например, 5432, 8080).
-  - Настроить volume для хранения данных БД.
+  app:
+    image: openjdk:17-jdk-slim
+    container_name: bankcards_app
+    volumes:
+      - ./build/libs/bankcards-0.0.1-SNAPSHOT.jar:/app.jar
+    ports:
+      - "8080:8080"
+    command: ["java", "-jar", "/app.jar"]
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - banknet
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+volumes:
+  mysql_data:
+
+networks:
+  banknet:
+    driver: bridge

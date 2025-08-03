@@ -4,33 +4,28 @@ server:
 spring:
   application:
     name: bankcards
-  
-  # MySQL в Docker
+
   datasource:
     url: jdbc:mysql://mysql:3306/bankcards_db
-    username: root
-    password: root123
+    username: bankuser
+    password: bankpass
     driver-class-name: com.mysql.cj.jdbc.Driver
-  
-  # JPA/Hibernate
+
   jpa:
     hibernate:
-      ddl-auto: create  # для первого запуска
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-  
-  # Liquibase
-  liquibase:
-    change-log: classpath:db/migration/db.changelog-master.xml
 
-# JWT Configuration
+  liquibase:
+    enabled: false
+
 jwt:
   secret: myVeryVeryLongSecretKeyForJWT123:)
-  expiration: 86400000  # 24 hours
+  expiration: 86400000 # 24 часа
 
-# Swagger
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

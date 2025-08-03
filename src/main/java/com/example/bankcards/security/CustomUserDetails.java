@@ -1,6 +1,5 @@
 package com.example.bankcards.security;
 
-
 import com.example.bankcards.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
