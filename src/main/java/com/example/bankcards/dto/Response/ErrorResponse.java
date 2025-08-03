@@ -3,12 +3,12 @@ package com.example.bankcards.dto.Response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Service
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ErrorResponse {

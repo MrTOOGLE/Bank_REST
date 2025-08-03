@@ -13,20 +13,10 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CardDto {
+public class FullCardDto {
     private String cardNumber;
-    private String cardId;
     private LocalDate validityPeriod;
     private Status status;
     private String ownerName;
-    private String ownerEmail;
-    private String ownerId;
     private BigDecimal balance;
-
-    public String getCardNumber() {
-        if (cardNumber != null && cardNumber.length() == 16) {
-            return "**** **** **** " + cardNumber.substring(12);
-        }
-        return cardNumber;
-    }
 }

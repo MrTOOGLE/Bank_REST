@@ -18,5 +18,8 @@ public enum ErrorCode {
 
     ACCESS_DENIED("ACCESS_DENIED");
 
-    ErrorCode(String code) {}
+    private final String code;
+    ErrorCode(String code) {
+        this.code = code;
+    }
 }

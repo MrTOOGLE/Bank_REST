@@ -1,6 +1,7 @@
 package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.CardDto;
+import com.example.bankcards.dto.FullCardDto;
 import com.example.bankcards.dto.Request.CreateCardRequest;
 import com.example.bankcards.dto.Request.SetCardStatusRequest;
 import com.example.bankcards.entity.Card;
@@ -41,6 +42,15 @@ public class CardController {
         Page<Card> cards = cardService.getAllCards(user, pageable);
         Page<CardDto> cardDtos = cards.map(cardMapper::toCardDto);
         return ResponseEntity.ok(cardDtos);
+    }
+
+    @GetMapping("/my/full")
+    public ResponseEntity<Page<FullCardDto>> getMyCardsWithFullNumbers(@AuthenticationPrincipal CustomUserDetails customUserDetails, Pageable pageable) {
+        User user = customUserDetails.getUser();
+        Page<Card> cards = cardService.getAllCards(user, pageable);
+        Page<FullCardDto> fullCardDtos = cards.map(cardMapper::toFullCardDto);
+        return ResponseEntity.ok(fullCardDtos);
+
     }
 
     @GetMapping("/{id}/balance")
