@@ -50,7 +50,13 @@ public class CardController {
         Page<Card> cards = cardService.getAllCards(user, pageable);
         Page<FullCardDto> fullCardDtos = cards.map(cardMapper::toFullCardDto);
         return ResponseEntity.ok(fullCardDtos);
+    }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<CardDto>> searchCards(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                     @RequestParam String cardNumber, Pageable pageable) {
+        Page<Card> cards = cardService.searchCards(userDetails.getUser(), cardNumber, pageable);
+        return ResponseEntity.ok(cards.map(cardMapper::toCardDto));
     }
 
     @GetMapping("/{id}/balance")

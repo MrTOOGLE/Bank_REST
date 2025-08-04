@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface CardRepository extends JpaRepository<Card, Long> {
     Optional<Card> findByNumber(String cardNumber);
     Page<Card> findByOwnerId(Long ownerId, Pageable pageable);
+    Page<Card> findByOwnerIdAndNumberContaining(Long ownerId, String number, Pageable pageable);
 }

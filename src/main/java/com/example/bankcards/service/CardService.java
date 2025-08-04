@@ -101,6 +101,10 @@ public class CardService {
         return cardRepository.findById(id).orElseThrow(() -> new ServiceException(ErrorCode.CARD_NOT_FOUND, "Карта не найдена"));
     }
 
+    public Page<Card> searchCards(User user, String search, Pageable pageable) {
+        return cardRepository.findByOwnerIdAndNumberContaining(user.getId(), search, pageable);
+    }
+
     @Transactional
     public void blockCard(User user, Card card) {
         checkValidityPeriod(card);
